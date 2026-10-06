@@ -1,4 +1,4 @@
-package dominio;
+package dominio.candidato;
 
 public class Candidato {
 }
