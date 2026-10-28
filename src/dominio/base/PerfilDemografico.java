@@ -1,5 +1,7 @@
 package dominio.base;
 
+import java.util.Objects;
+
 public class PerfilDemografico {
 
     private String faixaEtaria;
@@ -49,5 +51,20 @@ public class PerfilDemografico {
     public String exibirPerfil() {
         return "Região: " + regiao + " | Idade: " + faixaEtaria +
                 " | Escolaridade: " + escolaridade + " | Renda: " + faixaRenda;
+    }
+
+    // NOVO: sem isto, PlanoAmostral (HashMap<PerfilDemografico,...>) nunca reconhece dois perfis iguais
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PerfilDemografico)) return false;
+        PerfilDemografico p = (PerfilDemografico) o;
+        return Objects.equals(faixaEtaria, p.faixaEtaria) && Objects.equals(regiao, p.regiao)
+                && Objects.equals(escolaridade, p.escolaridade) && Objects.equals(faixaRenda, p.faixaRenda);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(faixaEtaria, regiao, escolaridade, faixaRenda);
     }
 }
