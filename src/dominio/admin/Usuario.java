@@ -5,6 +5,8 @@ import java.util.Set;
 
 public class Usuario extends Pessoa {
 
+    private static final long serialVersionUID = 1L;
+
     private String email;
     private String senha;
     private Set<Perfil> perfis;
