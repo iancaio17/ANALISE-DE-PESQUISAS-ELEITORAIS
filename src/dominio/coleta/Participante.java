@@ -1,19 +1,17 @@
 package dominio.coleta;
 
-import dominio.base.Pessoa;
 import dominio.base.PerfilDemografico;
+import dominio.base.Pessoa;
+import infraestrutura.excecoes.RegraNegocioException;
 
 public class Participante extends Pessoa {
+    private static final long serialVersionUID = 1L;
 
     private PerfilDemografico perfilDemografico;
 
     public Participante(int id, String nome, PerfilDemografico perfilDemografico) {
         super(id, nome);
-        if (perfilDemografico == null) {
-            throw new IllegalArgumentException("O perfil demográfico do participante é obrigatório.");
-        }
-
-        this.perfilDemografico = perfilDemografico;
+        setPerfilDemografico(perfilDemografico);
     }
 
     public PerfilDemografico getPerfilDemografico() {
@@ -22,7 +20,7 @@ public class Participante extends Pessoa {
 
     public void setPerfilDemografico(PerfilDemografico perfilDemografico) {
         if (perfilDemografico == null) {
-            throw new IllegalArgumentException("O perfil demográfico do participante é obrigatório.");
+            throw new RegraNegocioException("O perfil demográfico do participante é obrigatório.");
         }
         this.perfilDemografico = perfilDemografico;
     }
@@ -32,7 +30,6 @@ public class Participante extends Pessoa {
         System.out.println("=== Detalhes do Participante ===");
         System.out.println("ID: " + getId());
         System.out.println("Nome: " + getNome());
-
         System.out.println("Perfil: " + perfilDemografico.exibirPerfil());
     }
 }
