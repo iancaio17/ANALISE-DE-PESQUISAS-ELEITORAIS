@@ -1,4 +1,7 @@
 package dominio.admin;
 
-public class Perfil {
+public enum Perfil {
+    ADMINISTRADOR,
+    PESQUISADOR,
+    ANALISTA
 }

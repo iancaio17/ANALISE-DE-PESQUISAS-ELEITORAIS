@@ -1,21 +1,20 @@
 package dominio.admin;
 
 import dominio.base.Pessoa;
+import java.util.Set;
 
 public class Usuario extends Pessoa {
 
     private String email;
     private String senha;
-    private String perfil;
+    private Set<Perfil> perfis;
     private boolean ativo;
 
-    public Usuario(int id, String nome, String email, String senha, String perfil) {
+    public Usuario(int id, String nome, String email, String senha, Set<Perfil> perfis) {
         super(id, nome);
-        this.email = email;
-        this.perfil = perfil;
+        setPerfis(perfis);
         this.ativo = true;
-
-
+        setEmail(email);
         setSenha(senha);
     }
 
@@ -27,8 +26,8 @@ public class Usuario extends Pessoa {
         return senha;
     }
 
-    public String getPerfil() {
-        return perfil;
+    public Set<Perfil> getPerfis() {
+        return perfis;
     }
 
     public boolean isAtivo() {
@@ -36,8 +35,17 @@ public class Usuario extends Pessoa {
     }
 
     public void setEmail(String email) {
+        if (email == null || email.trim().isEmpty()){
+            throw new IllegalArgumentException("O E-mail não pode ser nulo ou vazio.");
+        }
+
+        if (!email.matches(".+@.+\\..+")) {
+            throw new IllegalArgumentException("Formato de E-mail inválido.");
+        }
         this.email = email;
+
     }
+
     public void setSenha(String senha) {
         if(senha == null || senha.trim().isEmpty()){
             throw new IllegalArgumentException("A senha não pode ser nula ou vazia.");
@@ -48,7 +56,7 @@ public class Usuario extends Pessoa {
         } else if(!senha.matches(".*\\d.*")){
             throw new IllegalArgumentException("A senha tem que ter no minimo um numero.");
 
-        } else if(!senha.matches(".[a-zA-Z].")){
+        } else if(!senha.matches(".*[a-zA-Z].*")){
             throw new IllegalArgumentException("A senha tem que ter no minimo uma letra.");
 
         } else {
@@ -56,8 +64,11 @@ public class Usuario extends Pessoa {
         }
     }
 
-    public void setPerfil(String perfil) {
-        this.perfil = perfil;
+    public void setPerfis(Set<Perfil> perfis) {
+        if(perfis == null || perfis.isEmpty()){
+            throw new IllegalArgumentException("O usuário deve possuir pelo menos um perfil.");
+        }
+        this.perfis = Set.copyOf(perfis);
     }
 
     public void setAtivo(boolean ativo) {
@@ -74,8 +85,9 @@ public class Usuario extends Pessoa {
         System.out.println("ID: " + getId());
         System.out.println("Nome: " + getNome());
         System.out.println("E-mail: " + email);
-        System.out.println("Perfil: " + perfil);
+        System.out.println("Perfis: " + getPerfis());
         System.out.println("Status: " + (ativo ? "Ativo" : "Inativo"));
     }
 }
+
 
