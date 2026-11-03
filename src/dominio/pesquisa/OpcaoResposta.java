@@ -1,15 +1,21 @@
 package dominio.pesquisa;
 
-public class OpcaoResposta {
-    private String textoOpcao;
+import infraestrutura.excecoes.PesquisaRegraNegocioException;
+import java.util.UUID;
 
-    public OpcaoResposta(String textoOpcao) {
-        if (textoOpcao == null || textoOpcao.trim().isEmpty()) {
-            throw new IllegalArgumentException("O texto da opção não pode ser vazio.");
+public class OpcaoResposta {
+    private final String id;
+    private String texto;
+
+    public OpcaoResposta(String texto) {
+        if (texto == null || texto.isBlank()) {
+            throw new PesquisaRegraNegocioException("O texto da opção de resposta não pode ser vazio.");
         }
-        this.textoOpcao = textoOpcao;
+        this.id = UUID.randomUUID().toString();
+        this.texto = texto;
     }
 
-    public String getTextoOpcao() { return textoOpcao; }
-    public void setTextoOpcao(String textoOpcao) { this.textoOpcao = textoOpcao; }
+    public String getId() { return id; }
+    public String getTexto() { return texto; }
+    public void setTexto(String texto) { this.texto = texto; }
 }

@@ -1,36 +1,60 @@
 package aplicacao.servicos;
 
 import dominio.pesquisa.Pesquisa;
-import java.util.ArrayList;
+import dominio.candidato.Candidato; // Assumindo a existência baseada na estrutura
+import infraestrutura.excecoes.PesquisaRegraNegocioException;
+import persistencia.repositorios.PesquisaRepository; // Assumindo a existência da interface no pacote correspondente
 import java.util.List;
 
 public class PesquisaService {
 
-    private List<Pesquisa> bancoPesquisas;
+    private final PesquisaRepository repository;
 
-    public PesquisaService() {
-        this.bancoPesquisas = new ArrayList<>();
+    public PesquisaService(PesquisaRepository repository) {
+        this.repository = repository;
     }
 
-    public void cadastrarPesquisa(Pesquisa pesquisa) {
-        if (pesquisa == null) throw new IllegalArgumentException("Pesquisa não pode ser nula.");
-
-        if (pesquisa.getTipo().equalsIgnoreCase("Intenção de voto") && pesquisa.getCandidatosAssociados().isEmpty()) {
-            throw new IllegalStateException("Erro: Pesquisas de intenção de voto devem possuir pelo menos um candidato associado.");
+    public Pesquisa criarPesquisa(Pesquisa pesquisa) {
+        if (repository.existePorCodigo(pesquisa.getCodigo())) {
+            throw new PesquisaRegraNegocioException("Já existe uma pesquisa registada com este código.");
         }
-
-        bancoPesquisas.add(pesquisa);
-        System.out.println("Sucesso: Pesquisa '" + pesquisa.getCodigo() + " - " + pesquisa.getNome() + "' cadastrada no sistema.");
+        return repository.salvar(pesquisa);
     }
 
-    public Pesquisa buscarPesquisaPorCodigo(String codigo) {
-        for (Pesquisa p : bancoPesquisas) {
-            if (p.getCodigo().equalsIgnoreCase(codigo)) {
-                return p;
-            }
-        }
-        throw new IllegalArgumentException("Erro: Pesquisa não encontrada.");
+    public void associarCandidato(String codigoPesquisa, Candidato candidato) {
+        Pesquisa pesquisa = buscarPesquisaPorCodigo(codigoPesquisa);
+        pesquisa.associarCandidato(candidato);
+        repository.atualizar(pesquisa);
     }
 
-    public List<Pesquisa> getBancoPesquisas() { return bancoPesquisas; }
+    public void iniciarColeta(String codigoPesquisa) {
+        Pesquisa pesquisa = buscarPesquisaPorCodigo(codigoPesquisa);
+        pesquisa.iniciarColeta();
+        repository.atualizar(pesquisa);
+    }
+
+    public void encerrarColeta(String codigoPesquisa) {
+        Pesquisa pesquisa = buscarPesquisaPorCodigo(codigoPesquisa);
+        pesquisa.encerrarColeta();
+        repository.atualizar(pesquisa);
+    }
+
+    public void processarPesquisa(String codigoPesquisa) {
+        Pesquisa pesquisa = buscarPesquisaPorCodigo(codigoPesquisa);
+        pesquisa.processarDados();
+        repository.atualizar(pesquisa);
+    }
+
+    public List<Pesquisa> listarTodas() {
+        return repository.buscarTodas();
+    }
+
+    public List<Pesquisa> consultarFiltros(String regiao, String cargo, String situacao) {
+        return repository.buscarPorFiltros(regiao, cargo, situacao);
+    }
+
+    private Pesquisa buscarPesquisaPorCodigo(String codigo) {
+        return repository.buscarPorCodigo(codigo)
+                .orElseThrow(() -> new PesquisaRegraNegocioException("Pesquisa não encontrada com o código: " + codigo));
+    }
 }

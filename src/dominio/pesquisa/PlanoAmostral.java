@@ -1,21 +1,26 @@
 package dominio.pesquisa;
 
-import dominio.base.PerfilDemografico;
 import java.util.HashMap;
 import java.util.Map;
 
 public class PlanoAmostral {
-    private Map<PerfilDemografico, Integer> metasPorPerfil;
+    private String metodologia;
+    private final Map<String, Integer> metasPorGrupo;
 
-    public PlanoAmostral() {
-        this.metasPorPerfil = new HashMap<>();
+    public PlanoAmostral(String metodologia) {
+        this.metodologia = metodologia;
+        this.metasPorGrupo = new HashMap<>();
     }
 
-    public Map<PerfilDemografico, Integer> getMetasPorPerfil() { return metasPorPerfil; }
-
-    public void adicionarMeta(PerfilDemografico perfil, int quantidadeMinima) {
-        if (perfil != null && quantidadeMinima > 0) {
-            this.metasPorPerfil.put(perfil, quantidadeMinima);
-        }
+    public void definirMetaGrupo(String grupo, int quantidadeMinima) {
+        this.metasPorGrupo.put(grupo, quantidadeMinima);
     }
+
+    public boolean atingiuMeta(String grupo, int entrevistasValidasRealizadas) {
+        int meta = metasPorGrupo.getOrDefault(grupo, 0);
+        return entrevistasValidasRealizadas >= meta;
+    }
+
+    public String getMetodologia() { return metodologia; }
+    public Map<String, Integer> getMetasPorGrupo() { return Map.copyOf(metasPorGrupo); }
 }
