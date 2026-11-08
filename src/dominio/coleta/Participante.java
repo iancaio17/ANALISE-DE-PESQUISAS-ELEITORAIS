@@ -1,7 +1,6 @@
 package dominio.coleta;
 
 import dominio.base.Pessoa;
-import dominio.base.PerfilDemografico;
 
 public class Participante extends Pessoa {
 
