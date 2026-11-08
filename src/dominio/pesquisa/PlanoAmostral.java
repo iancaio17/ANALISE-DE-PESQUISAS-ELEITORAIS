@@ -1,5 +1,6 @@
 package dominio.pesquisa;
 
+import dominio.base.PerfilDemografico;
 import java.util.HashMap;
 import java.util.Map;
 
