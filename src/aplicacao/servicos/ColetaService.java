@@ -4,7 +4,6 @@ import dominio.coleta.Entrevista;
 import dominio.pesquisa.Pesquisa;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ColetaService {
 
@@ -19,9 +18,7 @@ public class ColetaService {
 
         Pesquisa pesquisaAlvo = entrevista.getPesquisa();
 
-        // CORREÇÃO: pesquisa "Processada" também não pode receber novas entrevistas
-        if (pesquisaAlvo.getSituacao().equalsIgnoreCase("Encerrada")
-                || pesquisaAlvo.getSituacao().equalsIgnoreCase("Processada")) {
+        if (pesquisaAlvo.getSituacao().equalsIgnoreCase("Encerrada")) {
             throw new IllegalStateException("Erro: Coleta encerrada. Esta pesquisa não aceita novas entrevistas.");
         }
 
@@ -37,13 +34,6 @@ public class ColetaService {
 
         bancoEntrevistas.add(entrevista);
         System.out.println("Sucesso: Entrevista " + entrevista.getIdUnico() + " registrada com sucesso.");
-    }
-
-    // NOVO: usado pelo AnaliseService (módulos conversam por serviços, não por repositórios)
-    public List<Entrevista> getEntrevistasPorPesquisa(String codigoPesquisa) {
-        return bancoEntrevistas.stream()
-                .filter(e -> e.getPesquisa().getCodigo().equalsIgnoreCase(codigoPesquisa))
-                .collect(Collectors.toList());
     }
 
     public List<Entrevista> getBancoEntrevistas() { return bancoEntrevistas; }
