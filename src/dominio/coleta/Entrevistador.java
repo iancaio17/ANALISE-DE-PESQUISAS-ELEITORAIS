@@ -3,6 +3,7 @@ package dominio.coleta;
 import dominio.base.Pessoa;
 
 public class Entrevistador extends Pessoa {
+    private static final long serialVersionUID = 1L;
 
     public Entrevistador(int id, String nome) {
         super(id, nome);
