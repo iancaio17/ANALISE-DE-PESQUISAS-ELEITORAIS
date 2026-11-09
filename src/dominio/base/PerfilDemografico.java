@@ -1,10 +1,8 @@
 package dominio.base;
 
-import java.io.Serializable;
 import java.util.Objects;
 
-public class PerfilDemografico implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class PerfilDemografico {
 
     private String faixaEtaria;
     private String regiao;
@@ -51,6 +49,21 @@ public class PerfilDemografico implements Serializable {
                 Objects.equals(regiao, that.regiao) &&
                 Objects.equals(escolaridade, that.escolaridade) &&
                 Objects.equals(faixaRenda, that.faixaRenda);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(faixaEtaria, regiao, escolaridade, faixaRenda);
+    }
+
+    // NOVO: sem isto, PlanoAmostral (HashMap<PerfilDemografico,...>) nunca reconhece dois perfis iguais
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PerfilDemografico)) return false;
+        PerfilDemografico p = (PerfilDemografico) o;
+        return Objects.equals(faixaEtaria, p.faixaEtaria) && Objects.equals(regiao, p.regiao)
+                && Objects.equals(escolaridade, p.escolaridade) && Objects.equals(faixaRenda, p.faixaRenda);
     }
 
     @Override

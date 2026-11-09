@@ -27,7 +27,9 @@ public class ColetaService {
             throw new IllegalArgumentException("Erro: A entrevista deve estar vinculada a uma pesquisa válida.");
         }
 
-        if ("Encerrada".equalsIgnoreCase(pesquisaAlvo.getSituacao())) {
+        // CORREÇÃO: pesquisa "Processada" também não pode receber novas entrevistas
+        if (pesquisaAlvo.getSituacao().equalsIgnoreCase("Encerrada")
+                || pesquisaAlvo.getSituacao().equalsIgnoreCase("Processada")) {
             throw new IllegalStateException("Erro: Coleta encerrada. Esta pesquisa não aceita novas entrevistas.");
         }
 
@@ -59,53 +61,12 @@ public class ColetaService {
         System.out.println("Sucesso: Entrevista " + entrevista.getIdUnico() + " registrada e salva em arquivo.");
     }
 
-    public void cadastrarEntrevistador(Entrevistador entrevistador) {
-        if (entrevistador == null) {
-            throw new IllegalArgumentException("Erro: O entrevistador não pode ser nulo.");
-        }
-        repository.salvarEntrevistador(entrevistador);
-    }
-
-    public List<Entrevistador> listarEntrevistadores() {
-        return repository.listarEntrevistadores();
-    }
-
-    public void cadastrarParticipante(Participante participante) {
-        if (participante == null) {
-            throw new IllegalArgumentException("Erro: O participante não pode ser nulo.");
-        }
-        repository.salvarParticipante(participante);
-    }
-
-    public List<Participante> listarParticipantes() {
-        return repository.listarParticipantes();
-    }
-
-    public List<Entrevista> getBancoEntrevistas() {
-        return repository.listarEntrevistas();
-    }
-
-    public List<Entrevista> buscarEntrevistasPorPesquisa(String codigoPesquisa) {
-        return repository.listarEntrevistas().stream()
-                .filter(e -> e.getPesquisa().getCodigo().equals(codigoPesquisa))
+    // NOVO: usado pelo AnaliseService (módulos conversam por serviços, não por repositórios)
+    public List<Entrevista> getEntrevistasPorPesquisa(String codigoPesquisa) {
+        return bancoEntrevistas.stream()
+                .filter(e -> e.getPesquisa().getCodigo().equalsIgnoreCase(codigoPesquisa))
                 .collect(Collectors.toList());
     }
 
-    public List<Entrevista> buscarEntrevistasPorEntrevistador(Entrevistador entrevistador) {
-        return repository.listarEntrevistas().stream()
-                .filter(e -> entrevistador.equals(e.getEntrevistador()))
-                .collect(Collectors.toList());
-    }
-
-    public double calcularProgressoColeta(Pesquisa pesquisa) {
-        if (pesquisa == null || pesquisa.getQuantidadePrevista() <= 0) {
-            return 0.0;
-        }
-        long coletadas = buscarEntrevistasPorPesquisa(pesquisa.getCodigo()).size();
-        return Math.min(100.0, (coletadas * 100.0) / pesquisa.getQuantidadePrevista());
-    }
-
-    public void limparBancoDeColeta() {
-        repository.limparTudo();
-    }
+    public List<Entrevista> getBancoEntrevistas() { return bancoEntrevistas; }
 }

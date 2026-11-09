@@ -1,8 +1,6 @@
 package dominio.coleta;
 
-import dominio.base.PerfilDemografico;
 import dominio.base.Pessoa;
-import infraestrutura.excecoes.RegraNegocioException;
 
 public class Participante extends Pessoa {
     private static final long serialVersionUID = 1L;
