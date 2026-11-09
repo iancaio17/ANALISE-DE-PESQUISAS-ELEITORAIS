@@ -15,6 +15,10 @@ public class Candidato extends Pessoa {
         this.situacao = situacao;
     }
 
+    public boolean isSituacaoPermitidaParaPesquisa() {
+        return true;
+    }
+
     public int getNumeroIdentificador() { return numeroIdentificador; }
     public void setNumeroIdentificador(int numeroIdentificador) { this.numeroIdentificador = numeroIdentificador; }
 
