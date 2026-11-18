@@ -1,12 +1,21 @@
 package dominio.base;
 
-public abstract class Pessoa {
+import infraestrutura.utils.Validacao;
+import java.io.Serializable;
 
-    private int id;
+/**
+ * Classe base de todas as pessoas do sistema (usuários, entrevistadores e participantes).
+ * Concentra o identificador e o nome, evitando código repetido nas subclasses.
+ */
+public abstract class Pessoa implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    private final int id;
     private String nome;
 
-    public Pessoa(int id, String nome){
-        this.id = id;
+    protected Pessoa(int id, String nome) {
+        this.id = Validacao.positivo(id, "Identificador");
         setNome(nome);
     }
 
@@ -18,18 +27,15 @@ public abstract class Pessoa {
         return nome;
     }
 
-   public void setId(int id){
-        this.id = id;
-   }
+    public void setNome(String nome) {
+        this.nome = Validacao.texto(nome, "Nome");
+    }
 
-   public void setNome(String nome){
-        if(nome == null || nome.trim().isEmpty()){
-            throw new IllegalArgumentException("O nome não pode ser nulo ou vazio.");
-        }
-        this.nome = nome;
-   }
+    /** Texto que descreve a pessoa nas listas e relatórios. Cada subclasse decide o formato. */
+    public abstract String descrever();
 
-   public abstract void exibirDetalhes();
-
+    @Override
+    public String toString() {
+        return descrever();
+    }
 }
-

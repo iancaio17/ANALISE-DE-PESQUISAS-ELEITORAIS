@@ -1,18 +1,19 @@
 package dominio.coleta;
 
-import dominio.base.Pessoa;
 import dominio.base.PerfilDemografico;
+import dominio.base.Pessoa;
+import infraestrutura.utils.Validacao;
 
+/** Participante fictício de uma entrevista, com suas características de amostra. */
 public class Participante extends Pessoa {
 
-    private PerfilDemografico perfilDemografico;
+    private static final long serialVersionUID = 2L;
+
+    private final PerfilDemografico perfilDemografico;
 
     public Participante(int id, String nome, PerfilDemografico perfilDemografico) {
         super(id, nome);
-        if (perfilDemografico == null) {
-            throw new IllegalArgumentException("O perfil demográfico do participante é obrigatório.");
-        }
-
+        Validacao.exigir(perfilDemografico != null, "Perfil demográfico obrigatório.");
         this.perfilDemografico = perfilDemografico;
     }
 
@@ -20,19 +21,8 @@ public class Participante extends Pessoa {
         return perfilDemografico;
     }
 
-    public void setPerfilDemografico(PerfilDemografico perfilDemografico) {
-        if (perfilDemografico == null) {
-            throw new IllegalArgumentException("O perfil demográfico do participante é obrigatório.");
-        }
-        this.perfilDemografico = perfilDemografico;
-    }
-
     @Override
-    public void exibirDetalhes() {
-        System.out.println("=== Detalhes do Participante ===");
-        System.out.println("ID: " + getId());
-        System.out.println("Nome: " + getNome());
-
-        System.out.println("Perfil: " + perfilDemografico.exibirPerfil());
+    public String descrever() {
+        return "PT" + getId() + " · " + getNome();
     }
 }

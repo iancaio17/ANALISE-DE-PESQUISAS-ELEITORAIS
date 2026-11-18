@@ -1,41 +1,71 @@
 package dominio.candidato;
 
-import java.util.ArrayList;
-import java.util.List;
+import infraestrutura.utils.Validacao;
+import java.io.Serializable;
+import java.util.Locale;
+import java.util.UUID;
 
-public class Partido {
+/** Partido político fictício. Sigla e número são únicos (verificado pelo serviço). */
+public class Partido implements Serializable {
+
+    private static final long serialVersionUID = 2L;
+
+    private final String id = UUID.randomUUID().toString();
     private String nome;
     private String sigla;
     private int numero;
-    private String situacao;
+    private SituacaoPartido situacao;
 
-    private List<Candidato> candidatos;
-
-    public Partido(String nome, String sigla, int numero, String situacao) {
-        this.nome = nome;
-        this.sigla = sigla;
-        this.numero = numero;
-        this.situacao = situacao;
-        this.candidatos = new ArrayList<>();
+    public Partido(String nome, String sigla, int numero, SituacaoPartido situacao) {
+        setNome(nome);
+        setSigla(sigla);
+        setNumero(numero);
+        setSituacao(situacao);
     }
 
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
+    public String getId() {
+        return id;
+    }
 
-    public String getSigla() { return sigla; }
-    public void setSigla(String sigla) { this.sigla = sigla; }
+    public String getNome() {
+        return nome;
+    }
 
-    public int getNumero() { return numero; }
-    public void setNumero(int numero) { this.numero = numero; }
+    public String getSigla() {
+        return sigla;
+    }
 
-    public String getSituacao() { return situacao; }
-    public void setSituacao(String situacao) { this.situacao = situacao; }
+    public int getNumero() {
+        return numero;
+    }
 
-    public List<Candidato> getCandidatos() { return candidatos; }
+    public SituacaoPartido getSituacao() {
+        return situacao;
+    }
 
-    public void adicionarCandidato(Candidato candidato) {
-        if (candidato != null && !this.candidatos.contains(candidato)) {
-            this.candidatos.add(candidato);
-        }
+    public boolean isAtivo() {
+        return situacao == SituacaoPartido.ATIVO;
+    }
+
+    public void setNome(String nome) {
+        this.nome = Validacao.texto(nome, "Nome do partido");
+    }
+
+    public void setSigla(String sigla) {
+        this.sigla = Validacao.texto(sigla, "Sigla").toUpperCase(Locale.ROOT);
+    }
+
+    public void setNumero(int numero) {
+        this.numero = Validacao.positivo(numero, "Número do partido");
+    }
+
+    public void setSituacao(SituacaoPartido situacao) {
+        Validacao.exigir(situacao != null, "Situação do partido inválida.");
+        this.situacao = situacao;
+    }
+
+    @Override
+    public String toString() {
+        return sigla + " · " + nome;
     }
 }

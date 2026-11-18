@@ -1,15 +1,31 @@
 package dominio.pesquisa;
 
-public class OpcaoResposta {
-    private String textoOpcao;
+import infraestrutura.utils.Validacao;
+import java.io.Serializable;
+import java.util.UUID;
 
-    public OpcaoResposta(String textoOpcao) {
-        if (textoOpcao == null || textoOpcao.trim().isEmpty()) {
-            throw new IllegalArgumentException("O texto da opção não pode ser vazio.");
-        }
-        this.textoOpcao = textoOpcao;
+/** Uma opção de resposta de uma pergunta de escolha. */
+public final class OpcaoResposta implements Serializable {
+
+    private static final long serialVersionUID = 2L;
+
+    private final String id = UUID.randomUUID().toString();
+    private final String texto;
+
+    public OpcaoResposta(String texto) {
+        this.texto = Validacao.texto(texto, "Opção");
     }
 
-    public String getTextoOpcao() { return textoOpcao; }
-    public void setTextoOpcao(String textoOpcao) { this.textoOpcao = textoOpcao; }
+    public String getId() {
+        return id;
+    }
+
+    public String getTexto() {
+        return texto;
+    }
+
+    @Override
+    public String toString() {
+        return texto;
+    }
 }

@@ -1,81 +1,81 @@
 package dominio.admin;
 
 import dominio.base.Pessoa;
+import infraestrutura.utils.Senhas;
+import infraestrutura.utils.Validacao;
+import java.util.Locale;
+import java.util.Set;
 
+/** Usuário do sistema. Um usuário pode ter um ou mais perfis e só acessa se estiver ativo. */
 public class Usuario extends Pessoa {
 
+    private static final long serialVersionUID = 1L;
+    private static final String FORMATO_EMAIL = "[^\\s@]+@[^\\s@]+\\.[^\\s@]+";
+
     private String email;
-    private String senha;
-    private String perfil;
-    private boolean ativo;
+    private String senhaCriptografada;
+    private Set<Perfil> perfis;
+    private boolean ativo = true;
 
-    public Usuario(int id, String nome, String email, String senha, String perfil) {
+    public Usuario(int id, String nome, String email, String senha, Set<Perfil> perfis) {
         super(id, nome);
-        this.email = email;
-        this.perfil = perfil;
-        this.ativo = true;
-
-
+        setEmail(email);
         setSenha(senha);
+        setPerfis(perfis);
     }
 
     public String getEmail() {
         return email;
     }
 
+    /** Devolve o hash da senha (nunca o texto digitado). */
     public String getSenha() {
-        return senha;
+        return senhaCriptografada;
     }
 
-    public String getPerfil() {
-        return perfil;
+    public Set<Perfil> getPerfis() {
+        return perfis;
     }
 
     public boolean isAtivo() {
         return ativo;
     }
 
+    public boolean possuiPerfil(Perfil perfil) {
+        return perfis.contains(perfil);
+    }
+
+    public boolean isAdministrador() {
+        return possuiPerfil(Perfil.ADMINISTRADOR);
+    }
+
     public void setEmail(String email) {
-        this.email = email;
+        String normalizado = Validacao.texto(email, "E-mail").toLowerCase(Locale.ROOT);
+        Validacao.exigir(normalizado.matches(FORMATO_EMAIL), "Formato de e-mail inválido.");
+        this.email = normalizado;
     }
+
+    /** Valida a política de senhas e guarda apenas o hash. */
     public void setSenha(String senha) {
-        if(senha == null || senha.trim().isEmpty()){
-            throw new IllegalArgumentException("A senha não pode ser nula ou vazia.");
-
-        } else if(senha.length() < 8){
-            throw new IllegalArgumentException("A senha tem que ter no minimo 8 caracteres.");
-
-        } else if(!senha.matches(".*\\d.*")){
-            throw new IllegalArgumentException("A senha tem que ter no minimo um numero.");
-
-        } else if(!senha.matches(".[a-zA-Z].")){
-            throw new IllegalArgumentException("A senha tem que ter no minimo uma letra.");
-
-        } else {
-            this.senha = senha;
-        }
+        this.senhaCriptografada = Senhas.gerar(senha);
     }
 
-    public void setPerfil(String perfil) {
-        this.perfil = perfil;
+    public void setPerfis(Set<Perfil> perfis) {
+        Validacao.exigir(perfis != null && !perfis.isEmpty(), "O usuário deve possuir pelo menos um perfil.");
+        this.perfis = Set.copyOf(perfis);
     }
 
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
     }
 
+    /** Usuários inativos nunca são autenticados. */
     public boolean autenticar(String senha) {
-        return this.senha.equals(senha) && this.ativo;
+        return ativo && Senhas.confere(senha, senhaCriptografada);
     }
 
     @Override
-    public void exibirDetalhes() {
-        System.out.println("=== Detalhes do Usuário ===");
-        System.out.println("ID: " + getId());
-        System.out.println("Nome: " + getNome());
-        System.out.println("E-mail: " + email);
-        System.out.println("Perfil: " + perfil);
-        System.out.println("Status: " + (ativo ? "Ativo" : "Inativo"));
+    public String descrever() {
+        return getNome() + " · " + email;
     }
 }
-

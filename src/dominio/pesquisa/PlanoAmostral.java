@@ -1,21 +1,38 @@
 package dominio.pesquisa;
 
 import dominio.base.PerfilDemografico;
-import java.util.HashMap;
+import infraestrutura.utils.Validacao;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class PlanoAmostral {
-    private Map<PerfilDemografico, Integer> metasPorPerfil;
+/** Metodologia da pesquisa e metas mínimas de entrevistas por grupo da amostra. */
+public class PlanoAmostral implements Serializable {
 
-    public PlanoAmostral() {
-        this.metasPorPerfil = new HashMap<>();
+    private static final long serialVersionUID = 2L;
+
+    private final String metodologia;
+    private final Map<PerfilDemografico, Integer> metas = new LinkedHashMap<>();
+
+    public PlanoAmostral(String metodologia) {
+        this.metodologia = Validacao.texto(metodologia, "Metodologia");
     }
 
-    public Map<PerfilDemografico, Integer> getMetasPorPerfil() { return metasPorPerfil; }
+    public void definirMetaPerfil(PerfilDemografico perfil, int quantidade) {
+        Validacao.exigir(perfil != null, "Perfil obrigatório.");
+        metas.put(perfil, Validacao.positivo(quantidade, "Meta"));
+    }
 
-    public void adicionarMeta(PerfilDemografico perfil, int quantidadeMinima) {
-        if (perfil != null && quantidadeMinima > 0) {
-            this.metasPorPerfil.put(perfil, quantidadeMinima);
-        }
+    public void removerMeta(PerfilDemografico perfil) {
+        metas.remove(perfil);
+    }
+
+    public String getMetodologia() {
+        return metodologia;
+    }
+
+    public Map<PerfilDemografico, Integer> getMetasPorPerfil() {
+        return Collections.unmodifiableMap(metas);
     }
 }
