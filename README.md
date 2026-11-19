@@ -9,7 +9,7 @@ Módulos: **Administração**, **Pesquisas**, **Coleta e Amostra**, **Análise E
 
 ## Como executar
 
-Requisito: **Java 17 ou superior (x64)**. O JavaFX para Windows e Linux já está em `lib/`.
+Requisito: **Java 17 ou superior (x64)**. O JavaFX para Windows e Linux já está em `lib`.
 
 | Sistema | Executar | Recompilar (exige JDK) |
 | --- | --- | --- |
@@ -87,3 +87,14 @@ texto, então cada gráfico vira uma tabela de dados com uma coluna de barras em
 
 As alterações são gravadas na hora em `dados/sistema.dat` (cópia anterior em `.bak`). Uma segunda instância é
 bloqueada e um arquivo corrompido nunca é sobrescrito. `-Dsape.dados=/pasta` escolhe outro local.
+
+## Verificações realizadas
+
+- **41 testes de integração** (JUnit 5) passando: acesso e perfis, pesquisas, candidatos e partidos, coleta,
+  estatística/filtros/comparação e persistência/exportação.
+- As **18 abas** dos cinco módulos e o menu principal foram montados com dados de demonstração em JavaFX
+  (modo sem tela), sem erros; o aplicativo (`bin/sape.jar`) abre e cria a base.
+- Testado em Linux com JDK 21 (compilando para Java 17). Windows e macOS não foram executados nativamente;
+  as bibliotecas JavaFX oficiais para Windows estão incluídas.
+
+Bibliotecas de terceiros: [`lib/TERCEIROS.md`](lib/TERCEIROS.md).
